@@ -3,6 +3,7 @@
 Примеры:
 
 1. Зациленности нет:
+```
 const Dependencies = {
     'index.js': ['foo.js', 'bar.js', 'firts.js', 'style.css'],
     'foo.js': ['bar.js', '],
@@ -10,8 +11,9 @@ const Dependencies = {
     'first.js': ['second.js'],
     'second.js': ['third.js'],
 }
-
+```
 2. Зацикленность есть:
+```
 const Dependencies = {
     'index.js': ['foo.js', 'bar.js', 'firts.js', 'style.css'],
     'foo.js': ['bar.js', '],
@@ -19,7 +21,8 @@ const Dependencies = {
     'first.js': ['second.js'],
     'second.js': ['third.js'], 
 }
-
+```
+```
 const Dependencies = {
     'index.js': ['foo.js', 'bar.js', 'firts.js', 'style.css'],
     'foo.js': ['bar.js', '],
@@ -27,5 +30,5 @@ const Dependencies = {
     'first.js': ['second.js'],
     'second.js': ['foo.js'],
 }
-
+```
 Задачу можно рещить несколькими способами. Начну с обхода дерева в ширину 
