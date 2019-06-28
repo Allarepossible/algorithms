@@ -1,10 +1,12 @@
 const Dependencies = {
-    'index.js': ['foo.js', 'bar.js', 'firts.js', 'style.css'],
-    'foo.js': ['bar1.js'],
-    'bar.js': ['index', 's','foo3.js'],
-    'bar1.js': ['first.js'],
-    'first.js': ['second.js', 'bar.js', 'index.js'],
-    'second.js': [], 
+    '0': ['1', '2', '3', '4'],
+    '1': ['5', '6'],
+    '5': ['s','7'],
+    '3': ['6', '2'],
+    '6': [], 
+    '7': ['8', '4'],
+    '4': ['9'],
+    '9': ['5', '7']
 }
 
 
@@ -14,27 +16,38 @@ const notCircularDependencies = (deps) => {
   let chain = [];
   for (let item in deps) {
       chain.push(item);
-    
-      return buildChain(chain, deps[item], deps);
+
+      const result = buildChain(chain, deps[item], deps);
+
+      if (result) {
+        return 'circular dependensies'
+      }
   }
-  
+  return 'no'
 };
 
 const buildChain = (chain, array, deps) => {
+  let end;
     while (array.length > 0) {
       let elem = array.shift();
       
       if (chain.indexOf(elem) > -1) {
-        return false;
+        return true;
       } else {
+        
         chain.push(elem);
-        if (deps[elem] && deps[elem].length > 0) {
-          return buildChain(chain, deps[elem], deps);
+        
+        if (deps[elem]) {
+          end = buildChain(chain, deps[elem], deps);
         } else {
           chain.pop();
         }
       }
     }
+  if (end === true) {
+    return end;
+  } 
+  
   chain.pop();
 }
 
