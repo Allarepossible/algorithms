@@ -51,4 +51,3 @@ const buildChain = (chain, array, deps) => {
   chain.pop();
 }
 
-console.log(notCircularDependencies(Dependencies))
