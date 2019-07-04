@@ -5,7 +5,7 @@ const sequences = (current, open, close, n) => {
     }
     return;
   }
-  if (open <= n) {
+  if (open < n) {
     sequences(current + '(', open + 1, close, n);
   }
   if (close < open) {
