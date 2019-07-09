@@ -18,53 +18,28 @@ const countOfRepeat = arr => arr.reduce((acc, i) => (i < 3 ? acc * i : acc * fac
 const listPosition = word => {
   let sorted = [];
   let res = 0;
-  let set = new Set(word.split(''))
+  let w = word;
   
-  if (set.size === word.length) {
-    sorted = word.split('').sort();
-    for (let i = 0; i < word.length; i++) {
-      let index = sorted.indexOf(word[i])
-    
-      res += index * fact(set.size - 1 - i)
-      sorted = [...sorted.slice(0, index), ...sorted.slice(index+1)];
+  while (w.length > 0) {
+    let map = stringToMap(w);
+    sorted = Object.keys(map).sort();
+    let index = sorted.indexOf(w[0])
+    let rest = sorted.map(i => map[i]);
+
+    for (var j = 0; j < index; j++) {
+      res += fact(w.length - 1) * rest[j] / countOfRepeat(rest);
     }
-  
-    return res + 1;
-  } else {
-    let w = word;
-    for (let i = 0; i < word.length; i++) {
-      let map = stringToMap(w);
-      sorted = Object.keys(map).sort();
-      let index = sorted.indexOf(w[i])
-      let rest = [...sorted.slice(0, index), ...sorted.slice(index+1)].map(i => map[i]);
-      console.log([word[i], index,sorted, map, rest])
-//       if (map[word[i]] === 1) {
-//         delete map[word[i]];
-//       } else {
-//         map[word[i]]--;
-//       }
-//       res += index * fact(sorted.length - 1 - i) / rest;
-//       console.log([countOfRepeat(Object.values(map)), res])
-      w = w.slice(1, w.length);
-    }
-    
-    return res
+
+    w = w.slice(1, w.length);
   }
+
+  return res + 1;
   
 }
-
-
-
-
 
 
 //'QUESTION' : 24572
 //'BOOKKEEPER' : 10743
 
-
-console.log(listPosition('BOOKKEEPER'))
-
-
-
-
+console.log(listPosition('QUESTION'))
 console.log(listPosition('BOOKKEEPER'))
