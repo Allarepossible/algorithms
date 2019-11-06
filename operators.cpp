@@ -101,9 +101,10 @@ double Y(const RationalNumber& element) {
 
 
 void CreateTable() {
-    for (double i = -1; i <= 1; i = i + 0.1) {
-        if (i <= -0.1 || i > 0.1) {
-            cout << "x= " << i << "    \t y = " << RationalY(i) << "   \t  y1 = " << Y(i) << endl;
+    for (int i = -10; i <= 10; i++) {
+        if (i != 0) {
+            RationalNumber r = (double)i/10;
+            cout << "x= " << (double)i/10 << "    \t y = " << RationalY(r) << "   \t  y1 = " << Y(r) << endl;
         }
     }
 }
