@@ -22,16 +22,6 @@ public:
         m_row = m;
         m_column = n;
     }
-    void show(){
-        for(int i=0; i<m_row ;i++)
-        {
-            for(int j=0; j<m_column; j++)
-            {
-                cout<<m_d[i][j]<<' ';
-            }
-            cout<<endl;
-        }
-    }
     DMatrix() : m_row(1), m_column(1) {}
     DMatrix(int row, int column) {
         f(row, column);
@@ -52,6 +42,32 @@ public:
                 m_d[i][j]=ob.m_d[i][j];
             }
         }
+    }
+    DMatrix& operator=(const DMatrix &ob){
+        f(ob.m_row,ob.m_column);
+        
+        for(int i = 0;i < ob.m_row; i++){
+            for(int j = 0; j<ob.m_column; j++)
+            {
+                m_d[i][j]=ob.m_d[i][j];
+            }
+        }
+        return *this;
+    }
+    
+    DMatrix operator*(int a){
+        DMatrix pr(this->m_row, this->m_column);
+        for(int i = 0; i < this->m_row; i++){
+            for(int j = 0; j < this->m_column; j++)
+            {
+                pr.m_d[i][j]=this->m_d[i][j]*a;
+            }
+        }
+        return pr;
+    }
+    
+    double& operator()(int a, int b){
+        return this->m_d[a][b];
     }
 };
 
@@ -88,18 +104,22 @@ ostream& operator<< (ostream& out, const DMatrix& matrix) {
 
 int main()
 {
-    int x,y;
     DMatrix matrix;
-    cout<<"Введите колличество строк=";
-    cin>>x;
-    cout<<"Введите количество столбцов=";
-    cin>>y;
-    DMatrix M(x,y);
-    M.show();
     cout << endl;
     cin >> matrix;
     cout << endl;
-    cout << matrix;
+    cout << matrix<< endl;
+    cout << endl;
+    DMatrix matrix2(matrix);
     
+    cout << matrix2*2<< endl;
+    
+    DMatrix matrix3 = matrix2*10;
+    
+    
+    cout << matrix3<< endl;
+    
+    cout << matrix2(1,2)<< endl;
     return 0;
+    
 }
