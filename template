@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+template <typename T>
+class Container
+{
+private:
+    T* m_d;
+    int m_size;
+public:
+    friend istream& operator>> (istream& in, Container& c);
+    friend ostream& operator<< (ostream& out, const Container& c);
+    void f (int size) {
+        m_d = new T [size];
+        for (int i = 0; i < size; i++) {
+            m_d[i] = 1;
+        }
+        m_size = size;
+    }
+    Container() : m_size(1) {}
+    Container(int size) {
+        f(size);
+    }
+    ~Container(){
+        delete[] m_d;
+    }
+    Container(const Container &ob){
+        f(ob.m_size);
+        
+        for(int i = 0;i < ob.m_size; i++){
+            m_d[i]=ob.m_d[i];
+        }
+    }
+};
+
+istream& operator>> (istream& in, Container<char>& ob) {
+    cout << "Введите размер: ";
+    in >> ob.m_size;
+    ob.f(ob.m_size);
+    cout << "Введите " << ob.m_size << " элементов" << endl;
+    
+    for(int i = 0; i< ob.m_size; i++){
+        in >> ob.m_d[i];
+    }
+    
+    return in;
+}
+
+ostream& operator<< (ostream& out, const Container<char>& ob) {
+    cout << "Матрица из " << ob.m_size << " элементов" << endl;
+
+    for(int i = 0; i< ob.m_size; i++){
+         out << ob.m_d[i] << " ";
+    }
+    out << endl;
+    
+    return out;
+}
+
+int main()
+{
+    Container<char> ob;
+    cout << endl;
+    cin >> ob;
+    cout << endl;
+    cout << ob;
+    
+    
+    
+    return 0;
+}
