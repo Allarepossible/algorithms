@@ -1,0 +1,634 @@
+template <typename T>
+class Iterator
+{
+private:
+    int m_current; //индекс текущего положения итератора(адрес элемента)
+    Container<T> m_element; //контейнер для итератора
+public:
+    Iterator(Container<T>& element)
+    {
+        m_element = element;
+        m_current = 0;
+    }
+    T Current()
+    {
+        return m_element[m_current];
+    }
+    T Next()
+    {
+        m_current++;
+        return Current();
+    }
+    T Begin()
+    {
+        m_current = 0;
+        return Current();
+    }
+    T Set(int a)
+    {
+        if (a < m_element.Size())
+        {
+            m_current = a;
+            return Current();
+        }
+        else
+        {
+            cout << "Ошибка доступа!";
+        }
+    }
+    int Adress()
+    {
+        return m_current;
+    }
+    bool End(int a)
+    {
+        if (a == m_element.Size())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    bool IsEmpty() //проверка массива пустой или нет
+    {
+        if (m_element.Size() == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+};
+template <typename T>
+ostream& operator<< (ostream& out, const Container<T>& element) // перегрузка оператора потокового вывода
+{
+    for (int i = 0; i < element.m_length; i++)
+    {
+        out << element.m_data[i] << " ";
+    }
+    return out;
+}
+template <typename T>
+istream& operator>> (istream& in, Container<T>& element) //перегрузка оператора потокового ввод
+{
+    cout << "Введите длинну: ";
+    in >> element.m_length;
+    while (element.m_length <= 0)
+    {
+        cout << "Введите корректную длинну : ";
+        in >> element.m_length;
+    }
+    element.Create(element.m_length);
+    cout << "Введите элементы: ";
+    for (int i = 0; i < element.m_length; i++)
+    {
+        in >> element.m_data[i];
+    }
+    element.Sort();
+    return in;
+}
+
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+    int a;
+    Container<int> A;
+    cin >> A;
+    cout << "Ваш контейнер: " << A << endl;
+    cout << "Введите число:" << endl;
+    cin >> a;
+
+    A.AddLast(a);
+    A.AddFirst(a);
+    cout << "Ваш контейнер после дабавления: " << A << endl;
+
+    A.RemoveLast();
+    A.RemoveFirst();
+    A.RemoveFirst();
+    cout << "Ваш контейнер после удаления элементов: " << A << endl;
+    Iterator<int>Ai(A);
+    cout << "Текущий элемент итератора: " << Ai.Current() << endl;
+    cout << "Следующий элемент итератора: " << Ai.Next() << endl;
+    cout << "Следующий элемент итератора: " << Ai.Next() << endl;
+}
+
+
+
+#include <iostream>
+#include <conio.h>
+using namespace std;
+
+class Element
+{
+private:
+    int data;
+    Element* next;
+public:
+    Element(int a)
+    {
+        data = a;
+        next = nullptr;
+    }
+    friend class Stack;
+    friend class Iterator;
+    friend ostream& operator << (ostream& s, Stack& lst);
+};
+
+class Stack
+{
+private:
+    Element* top;
+public:
+    ~Stack();//Деструктор
+    Stack(Stack&);//Конструктор(не понадобится)
+    Stack() { top = 0; };//Конструктор по умолчанию
+    bool Empty() { return top == NULL; }
+    void push(int);//Ввод
+    void pop(int);//Удаление
+    int peek();//Просмотр
+    Element* poisk(int);
+    friend ostream& operator <<(ostream&, Stack&);//Перегрузка функции вывода, так как мы выводим на 1 элемент, а список
+    Stack& operator=(Stack&);//Перегрузка оператора присваивания
+    friend class Iterator;
+};
+class Iterator
+{
+private:
+    Stack* D;
+    Element* current;
+public:
+    Iterator(Stack& d)
+    {
+        D = &d;
+        current = d.top;
+    }
+    //Функция просмотра текущего элемента
+    int peek()
+    {
+        return current->data;
+    }
+    //Функция перехода к следующему элементу
+    void next()
+    {
+        current = current->next;
+    }
+    //Функция перехода в начало списка
+    void reset()
+    {
+        current = D->top;
+    }
+    //Функуия выдачи текущего адреса
+    Element* cur()
+    {
+        return current;
+    }
+    Element* isEmpty()
+    {
+        if (current == 0) return 0;
+        else return current;
+    }
+    //Функция перехода по заданному адресу
+    void set(Element * p = 0) { current = p; }
+};
+
+
+//Деструктор
+Stack:: ~Stack()
+{
+    Element* pe = top;//Текущий элемент
+    Element* pn = top;//Следующий элемент
+    while (pe != 0)//Пока текущий элемент на равен 0, т.е пока существует список
+    {
+        pn = pe->next;//След. элемент равен след. после текущего
+        delete pe;//Удаляем текущий элемент
+        pe = pn;//Передвигаем
+    }
+    top = 0;//Очищаем указатель на первый элемент, т.к его нет
+}
+//Функция поиска и сортировки списка по возрастанию
+Element* Stack::poisk(int x) {
+    Element* r = top;
+    Element* q = 0;
+    while (r != 0) {
+        if (x <= r->data)//Если наш элемент меньше или равен
+            return q;//Возвращаем  элемент
+        else {
+            q = r;//Если наш элемент все-таки больше, то перемещаем его вперед
+            r = r->next;//Передвигаемся на следующий элемент
+        }
+    }
+    return q;//Возвращаем этот элемент
+}
+//Добавление элемента
+void Stack::push(int a)
+{
+    Element* ptr = new Element(a);//Создаем новый элемент
+    Element* s = poisk(a);//Вызываем функцию поиска
+    if (s != 0)//Если список существует
+    {
+        ptr->next = s->next;//Перемещаем адрес(pointer-указатель)
+        s->next = ptr;//Вставляем элемент pointer
+    }
+    else
+    {
+        ptr->next = top;//Присваиваем полю next нового элемента указатель на тот эл-т, который раньше был первым
+        top = ptr;//Присваиваем переменной top наш элемент=>новый элемент стал первым
+    }
+}
+
+//Функция удаления
+void Stack::pop(int x)
+{
+    Element* r = 0;
+    if (top == 0) //Если список существует
+    {
+        return;
+    }
+    else
+    {
+        Element* q = poisk(x);//Вызываем функцию поиска и упорядочивания
+
+        if (q == 0)
+        {
+            return;
+        }
+        else //Если список не пустой
+        {
+            r = q->next;//Присваиваем r вместо 0 след. элемент
+            if (r->data == x) //Если содержимое ячейки списка совпадает и искомым элементом
+            {
+                q->next = r->next;//То перемещаемся вперед
+            }
+            //if (r!=0)
+            //delete r;
+        }
+        //delete r;//Удаляем найденный элемент
+
+    }
+}
+//Просматриваем первый элемент нашего списка
+int Stack::peek()
+{
+    if (top != 0)//Если первый элемент существует, т.е список не пуст
+    {
+        return top->data;//Возвращаем данные первого элемента
+    }
+}
+Stack::Stack(Stack& s)
+{
+    if (s.top == 0)//Если списка нет, то конец
+        return;
+    top = new Element(s.peek());//Создаем новый элемент и вытаскиваем из него data
+    Element * pfrom = s.top->next;//Элем. pfrom присваиваем следующее значение после top
+    Element * pto_new = 0;//Элем. pto_new приравниваем к 0
+    Element * pto_old = top;//Элем-ту pto_old присваиваем значение первой переменной
+    while (pfrom != 0)//Пока элемент pfrom не равен 0
+    {
+         pto_new = new Element(pfrom->data);//В элем. pto_new создаем нвоый элемент pfrom и присваиваем data из него
+        pto_old->next = pto_new;//След. элем. за pto_old присваив. знач. элем. pto_new
+        pto_old = pto_new;//Самому pto_old присв. знач. pto_new
+        pfrom = pfrom->next;//Элем. pfrom присваиваем знач. элемента после pfrom
+    }
+}
+//Перегрузка оператора вывода для того, чтобы вывести весь список одной строкой
+ostream& operator <<(ostream& s, Stack& oper)
+{
+    if (!oper.Empty())//Пока список не пустой
+        if (oper.top != 0)//Пока первый элемент не равен 0
+        {
+            cout << "[";//Открываем [
+            Element* p = oper.top;
+            while (p)//Пока существует p
+            {
+                s << p->data << " ";//Выводим  данные всех ячеек(по одной)
+                p = p->next;//По сути просто перемещаем объект p на следующий элемент списка
+            }
+            cout << "]";//Закрываем ]
+        }
+        else
+            cout << "отсутствуют";//Если список пуст, то выводим сообщение об этом
+    return s;
+}
+Stack& Stack::operator=(Stack& s)
+{
+    if (this == &s)
+        return *this;
+    Element * pe = top;//Текущий элемент
+    Element * pn = top;//Следующий элемент
+    while (pe != 0)//Пока текущий элемент на равен 0, т.е пока существует список
+    {
+        pn = pe->next;//След. элемент равен след. после текущего
+        delete pe;//Удаляем текущий элем.
+        pe = pn;//Передвигаем
+    }
+    top = 0;//Очищаем указатель на первый элемент, т.к его нет
+    new(this) Stack(s);
+    return*this;
+}
+//Функуия нахождения повторяющихся чисел
+int find(int elem1, Stack& ochered)
+{
+    Iterator m(ochered);
+    int elem2;
+    for (m.reset(); m.isEmpty() != 0; m.next())//for(начало списка;пока множество не пустое;переходим к след. элементу)
+    {
+        elem2 = m.peek();//считываем элемент
+        if (elem1 == elem2) //Если элемент1 равен элемент2
+            return 1;
+    }
+    return 0;
+}
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    Stack a;//Создаем объект а
+    a.push(50);//Ввод значение
+    a.push(70);
+    a.push(20);
+    a.push(17);
+    a.push(32);
+    a.push(30);
+    a.push(249);
+    a.push(250);
+    a.push(234);
+    a.push(3);
+    a.push(0);
+    cout << "Элементы списка по возрастанию: " << a << endl;//Вывод списка
+    a.pop(32);//Удаляем элементы
+    a.pop(234);
+    a.pop(70);
+    a.pop(20);
+    a.pop(100);
+    a.pop(123);
+    a.pop(1);
+    cout << "После удаления чисел 20, 32, 70, 234: " << a << endl;
+    Iterator m(a);//Создаем объект и получаем ссылку на а
+    int elem1 = m.peek();//Записываем список
+    Stack b;//Создаем объект b
+    b.push(elem1);//Записываем стэк
+    for (m.next(); m.isEmpty() != 0; m.next())//for(След. элемент; множество не пустое; след. элемент)
+    {
+        elem1 = m.peek();//Используем функцию доступа
+        if (find(elem1, b) == 0)//Если нашлись повторяющиеся элементы
+            b.push(elem1);//Записываем стэк
+    }
+    cout << "Список после итерирования: " << b;//Вывод
+    _getch();
+}
+
+
+
+
+#include <iostream>
+using namespace std;
+
+class CList;
+class Iterator;
+
+class element {
+    int data;
+    element*next;
+    element*prev;
+public:
+    friend class Iterator;
+    friend class CList;
+    element(int a) { data = a; next = 0; prev = 0; }
+    
+
+    friend ostream& operator << (ostream &z, CList &s);
+    friend ostream& operator << (ostream &z, element &s);
+};
+
+class CList {
+    element* top;
+public:
+    friend class Iterator;
+    ~CList();
+    CList(CList&);
+    CList() { top = 0; }
+    CList(int*, int);
+    void push(int);
+    void pop(int);
+    int size();
+    int peek(element*);
+    CList & operator = (CList&);
+    element* find_E(int);
+    friend ostream& operator << (ostream &z, CList &s);
+};
+
+class Iterator {
+    CList *D;
+    element *cur;
+public:
+    Iterator(CList&d) { D = &d; cur = d.top; }
+    int peek() { return cur->data; }
+    void next() { cur = cur->next; }
+    void prev() { cur = cur->prev; }
+    void reset() { cur = D->top; }
+    element* current() { return cur; }
+    int isEmpty() { if (cur == 0)return 1; else return 0; }
+    void set(element *p = 0) { cur = p; }
+};
+
+CList::CList(int* arr, int len) {
+    top = 0;
+    for (int i = 0; i<len; i++) {
+        this->push(arr[i]);
+    }
+}
+
+CList ::~CList() {
+    element *pe = top;
+    element *pn = top;
+    while (pe != 0) {
+        pn = pe->next;
+        delete pe;
+        pe = pn;
+    }
+    top = 0;
+}
+
+CList::CList(CList&s) {
+    if (s.top == 0)return;
+    top = new element(s.peek(s.top));
+    element*pfrom = s.top->next;
+    element*pto_new = 0;
+    element*pto_old = top;
+    while (pfrom != 0) {
+        pto_new = new element(pfrom->data);
+        pto_old->next = pto_new;
+        pto_new->prev = pto_old;
+        pto_old = pto_new;
+        pfrom = pfrom->next;
+    }
+}
+
+CList& CList:: operator=(CList& s) {
+    if (this == &s)return *this;
+    element *pe = top;
+    element *pn = top;
+    while (pe != 0) {
+        pn = pe->next;
+        delete pe;
+        pe = pn;
+    }
+    top = new element(s.peek(s.top));
+    element*pfrom = s.top->next;
+    element*pto_new = 0;
+    element*pto_old = top;
+    while (pfrom != 0) {
+        pto_new = new element(pfrom->data);
+        pto_old->next = pto_new;
+        pto_new->prev = pto_old;
+        pto_old = pto_new;
+        pfrom = pfrom->next;
+    }
+}
+
+int CList::peek(element* a) {
+    return a->data;
+}
+
+element* CList::find_E(int a) {
+    if (top == 0 || top->data >= a) return 0;
+    element *prev = top;
+    element *p = top;
+    while (!p == 0) {
+        if (p->data >= a) return prev;
+        prev = p;
+        p = p->next;
+    }
+    return prev;
+}
+
+ostream& operator <<(ostream &z, CList &s) {
+    if (s.top == 0) return z;
+    element *p = s.top;
+    while (!p->next == 0) {
+        cout << p->data << '-';
+        p = p->next;
+    }
+    cout << p->data << endl;
+    return z;
+}
+
+void CList::push(int a) {
+    element* q = find_E(a);
+    element*ptr = new element(a);
+    if (top == 0) {
+        top = ptr;
+    }
+    else if (q == 0) {
+        top->prev = ptr;
+        ptr->next = top;
+        top = ptr;
+    }
+    else {
+        if (!q->next == 0)q->next->prev = ptr;
+        ptr->next = q->next;
+        ptr->prev = q;
+        q->next = ptr;
+    }
+}
+
+
+void CList::pop(int a) {
+    element* q = find_E(a);
+    element* r = new element(0);
+    if (q == 0) {
+        if (!top == 0 && top->data == a) {
+            r = top;
+            top = top->next;
+            top->prev = 0;
+            delete(r);
+        }
+    }
+    else if (!q->next == 0) {
+        r = q->next;
+        if (r->data == a) {
+            if (!r->next == 0) {
+                r->next->prev = q;
+            }
+            q->next = r->next;
+            delete(r);
+        }
+    }
+}
+
+int CList::size() {
+    element*p = top;
+    int i = 1;
+    for (; !p->next == 0; i++)
+        p = p->next;
+    return i;
+}
+
+int find(int el, CList& D1) {
+    Iterator I1(D1);
+    int el1;
+    for (I1.reset(); I1.isEmpty() != 1; I1.next()) {
+        el1 = I1.peek();
+        if (el == el1)return 1;
+    }
+    return 0;
+}
+
+
+int main() {
+    setlocale(0, "rus");
+    CList A;
+    Iterator I(A);
+    int n;
+    int arr[10];
+
+    A.push(5);
+    A.push(2);
+    A.push(3);
+    A.push(16);
+    A.push(20);
+    A.push(15);
+
+    cout << "A: " << A;
+
+    A.pop(5);
+    A.pop(2);
+    A.pop(3);
+    A.pop(20);
+    cout << "A: " << A;
+    cout << "A.size(): " << A.size() << endl;
+    cout << "Is 15 in A: " << find(15, A) << endl;
+    cout << "Is 3 in A: " << find(3, A) << endl;
+
+    cout << "¬‚Â‰ËÚÂ ‡ÁÏÂ Ï‡ÒÒË‚‡: (<10)" << endl;
+    cin >> n;
+
+    cout << "¬‚Â‰ËÚÂ ˝ÎÂÏÂÌÚ˚ Ï‡ÒÒË‚‡" << endl;
+    for (int i = 0; i<n; i++) cin >> arr[i];
+
+    CList B(arr, n);
+    cout << "B: " << B;
+
+    B.push(3);
+    B.push(6);
+    B.push(1);
+
+    cout << "B: " << B;
+
+    B.pop(0);
+    B.pop(1);
+
+    cout << "B: " << B;
+
+    return 0;
+};
+
+
+
+
